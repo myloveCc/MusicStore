@@ -1,17 +1,16 @@
-#if TESTING
 using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Identity;
 using MusicStore.Mocks.Common;
 
-namespace MusicStore.Mocks.MicrosoftAccount
+namespace MusicStore.Mocks.Google
 {
-    internal class TestMicrosoftAccountEvents
+    internal class TestGoogleEvents
     {
         internal static Task OnCreatingTicket(OAuthCreatingTicketContext context)
         {
@@ -19,13 +18,12 @@ namespace MusicStore.Mocks.MicrosoftAccount
             {
                 Helpers.ThrowIfConditionFailed(() => context.AccessToken == "ValidAccessToken", "Access token is not valid");
                 Helpers.ThrowIfConditionFailed(() => context.RefreshToken == "ValidRefreshToken", "Refresh token is not valid");
-                Helpers.ThrowIfConditionFailed(() => MicrosoftAccountHelper.GetGivenName(context.User) == "AspnetvnextTest", "Given name is not valid");
-                Helpers.ThrowIfConditionFailed(() => MicrosoftAccountHelper.GetSurname(context.User) == "AspnetvnextTest", "Surname is not valid");
-                Helpers.ThrowIfConditionFailed(() => MicrosoftAccountHelper.GetId(context.User) == "fccf9a24999f4f4f", "Id is not valid");
-                Helpers.ThrowIfConditionFailed(() => MicrosoftAccountHelper.GetDisplayName(context.User) == "AspnetvnextTest AspnetvnextTest", "Name is not valid");
-                Helpers.ThrowIfConditionFailed(() => context.ExpiresIn.Value == TimeSpan.FromSeconds(3600), "ExpiresIn is not valid");
+                Helpers.ThrowIfConditionFailed(() => GoogleHelper.GetEmail(context.User) == "AspnetvnextTest@gmail.com", "Email is not valid");
+                Helpers.ThrowIfConditionFailed(() => GoogleHelper.GetId(context.User) == "106790274378320830963", "Id is not valid");
+                Helpers.ThrowIfConditionFailed(() => GoogleHelper.GetFamilyName(context.User) == "AspnetvnextTest", "FamilyName is not valid");
+                Helpers.ThrowIfConditionFailed(() => GoogleHelper.GetName(context.User) == "AspnetvnextTest AspnetvnextTest", "Name is not valid");
+                Helpers.ThrowIfConditionFailed(() => context.ExpiresIn.Value == TimeSpan.FromSeconds(1200), "ExpiresIn is not valid");
                 Helpers.ThrowIfConditionFailed(() => context.User != null, "User object is not valid");
-                Helpers.ThrowIfConditionFailed(() => MicrosoftAccountHelper.GetId(context.User) == context.User.SelectToken("id").ToString(), "User id is not valid");
                 context.Ticket.Principal.Identities.First().AddClaim(new Claim("ManageStore", "false"));
             }
 
@@ -56,4 +54,3 @@ namespace MusicStore.Mocks.MicrosoftAccount
         }
     }
 } 
-#endif

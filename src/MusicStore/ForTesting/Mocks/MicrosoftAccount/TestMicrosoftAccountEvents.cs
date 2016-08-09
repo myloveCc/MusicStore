@@ -1,30 +1,30 @@
-#if TESTING
 using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Identity;
 using MusicStore.Mocks.Common;
 
-namespace MusicStore.Mocks.Facebook
+namespace MusicStore.Mocks.MicrosoftAccount
 {
-    internal class TestFacebookEvents
+    internal class TestMicrosoftAccountEvents
     {
         internal static Task OnCreatingTicket(OAuthCreatingTicketContext context)
         {
             if (context.Ticket.Principal != null)
             {
-                Helpers.ThrowIfConditionFailed(() => context.AccessToken == "ValidAccessToken", "");
-                Helpers.ThrowIfConditionFailed(() => FacebookHelper.GetEmail(context.User) == "AspnetvnextTest@test.com", "");
-                Helpers.ThrowIfConditionFailed(() => FacebookHelper.GetId(context.User) == "Id", "");
-                Helpers.ThrowIfConditionFailed(() => FacebookHelper.GetLink(context.User) == "https://www.facebook.com/myLink", "");
-                Helpers.ThrowIfConditionFailed(() => FacebookHelper.GetName(context.User) == "AspnetvnextTest AspnetvnextTest", "");
-                Helpers.ThrowIfConditionFailed(() => context.User.SelectToken("id").ToString() == FacebookHelper.GetId(context.User), "");
-                Helpers.ThrowIfConditionFailed(() => context.ExpiresIn.Value == TimeSpan.FromSeconds(100), "");
-                Helpers.ThrowIfConditionFailed(() => context.AccessToken == "ValidAccessToken", "");
+                Helpers.ThrowIfConditionFailed(() => context.AccessToken == "ValidAccessToken", "Access token is not valid");
+                Helpers.ThrowIfConditionFailed(() => context.RefreshToken == "ValidRefreshToken", "Refresh token is not valid");
+                Helpers.ThrowIfConditionFailed(() => MicrosoftAccountHelper.GetGivenName(context.User) == "AspnetvnextTest", "Given name is not valid");
+                Helpers.ThrowIfConditionFailed(() => MicrosoftAccountHelper.GetSurname(context.User) == "AspnetvnextTest", "Surname is not valid");
+                Helpers.ThrowIfConditionFailed(() => MicrosoftAccountHelper.GetId(context.User) == "fccf9a24999f4f4f", "Id is not valid");
+                Helpers.ThrowIfConditionFailed(() => MicrosoftAccountHelper.GetDisplayName(context.User) == "AspnetvnextTest AspnetvnextTest", "Name is not valid");
+                Helpers.ThrowIfConditionFailed(() => context.ExpiresIn.Value == TimeSpan.FromSeconds(3600), "ExpiresIn is not valid");
+                Helpers.ThrowIfConditionFailed(() => context.User != null, "User object is not valid");
+                Helpers.ThrowIfConditionFailed(() => MicrosoftAccountHelper.GetId(context.User) == context.User.SelectToken("id").ToString(), "User id is not valid");
                 context.Ticket.Principal.Identities.First().AddClaim(new Claim("ManageStore", "false"));
             }
 
@@ -54,5 +54,4 @@ namespace MusicStore.Mocks.Facebook
             return Task.FromResult(0);
         }
     }
-}
-#endif
+} 
