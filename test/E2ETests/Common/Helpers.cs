@@ -18,7 +18,7 @@ namespace E2ETests
 
         public static string GetApplicationPath(ApplicationType applicationType)
         {
-            return Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "src", applicationType == ApplicationType.Standalone ? "MusicStore.Standalone" : "MusicStore"));
+            return Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "samples", applicationType == ApplicationType.Standalone ? "MusicStore.Standalone" : "MusicStore"));
         }
 
         public static void SetInMemoryStoreForIIS(DeploymentParameters deploymentParameters, ILogger logger)
@@ -39,6 +39,17 @@ namespace E2ETests
 
                 File.WriteAllText(overrideConfig, "{\"UseInMemoryDatabase\": \"true\"}");
             }
+        }
+
+        public static string GetCurrentBuildConfiguration()
+        {
+            var configuration = "Debug";
+            if (string.Equals(Environment.GetEnvironmentVariable("Configuration"), "Release", StringComparison.OrdinalIgnoreCase))
+            {
+                configuration = "Release";
+            }
+
+            return configuration;
         }
     }
 }
